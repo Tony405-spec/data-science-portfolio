@@ -1,2 +1,7 @@
-Current Date and Time (UTC - YYYY-MM-DD HH:MM:SS formatted): 2026-03-15 10:39:24
-Current User's Login: Tony405-spec
+"""Preprocessing package.
+
+This file was previously populated with CI metadata lines (date/login), which are not valid
+Python code and caused flake8 to fail with E999.
+"""
+
+__all__ = []
