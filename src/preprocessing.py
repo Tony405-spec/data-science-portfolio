@@ -21,6 +21,18 @@ def handle_missing_values(df, strategy="median"):
     """
     df_clean = df.copy()
 
+    # Validate strategy
+    valid_strategies = {"median", "mean", "mode", "drop"}
+    if strategy not in valid_strategies:
+        raise ValueError(
+            f"Unsupported strategy '{strategy}'. Supported strategies are: "
+            f"{', '.join(sorted(valid_strategies))}."
+        )
+
+    # Implement 'drop' behavior: drop any rows with at least one missing value
+    if strategy == "drop":
+        return df_clean.dropna()
+
     for col in df_clean.columns:
         if df_clean[col].isnull().any():
             if is_numeric_dtype(df_clean[col]):
