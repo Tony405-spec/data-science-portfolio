@@ -12,8 +12,15 @@ def train_baseline_model(rows: list[dict[str, str]], target_field: str) -> str:
 
     counts: dict[str, int] = {}
     for row in rows:
-        value = row.get(target_field, "")
+        value = row.get(target_field)
+        if value is None:
+            continue
+        if isinstance(value, str) and value.strip() == "":
+            continue
         counts[value] = counts.get(value, 0) + 1
+
+    if not counts:
+        raise ValueError(f"No valid values found for target field '{target_field}'.")
 
     return max(counts, key=counts.get)
 

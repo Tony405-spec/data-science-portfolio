@@ -10,7 +10,7 @@ from src.preprocessing import clean_rows
 def run(input_path: str | Path, output_path: str | Path, required_fields: list[str] | None = None) -> Path:
     rows = load_csv(input_path)
     cleaned = clean_rows(rows, required_fields=required_fields)
-    return write_csv(output_path, cleaned, fieldnames=rows[0].keys() if rows else None)
+    return write_csv(output_path, cleaned, fieldnames=cleaned[0].keys() if cleaned else None)
 
 
 def main() -> None:
