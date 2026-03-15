@@ -10,6 +10,7 @@ import seaborn as sns
 from pathlib import Path
 import logging
 import sys
+import numpy as np
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
