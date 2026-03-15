@@ -1,3 +1,5 @@
-"""Reusable data science utilities."""
+"""Preprocessing package."""
 
-__all__ = ["data_loader", "preprocessing"]
+from .preprocessing import handle_missing_values, clean_data, scale_features
+
+__all__ = ["handle_missing_values", "clean_data", "scale_features"]
