@@ -27,21 +27,14 @@ jobs:
     # Step 1: Check out the repository code
     - name: Checkout code
       uses: actions/checkout@v4
-      
-    # Step 2: Cache pip packages to speed up installation
-    - name: Cache pip packages
-      uses: actions/upload-artifact@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-          
-    # Step 3: Set up Python environment
+
+    # Step 2: Set up Python environment with pip caching
     - name: Setup Python ${{ env.PYTHON_VERSION }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
+        cache: pip
+        cache-dependency-path: requirements.txt
         
     # Step 4: Install all dependencies
     - name: Install dependencies
@@ -59,10 +52,6 @@ jobs:
         # Check for style issues (warnings only)
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
-    - name: Format code with black
-      run: |
-        black . --line-length=127
-
     - name: Check formatting with black
       run: |
         black --check --diff . --line-length=127
@@ -75,14 +64,15 @@ jobs:
     # Step 7: Execute all Jupyter notebooks
     - name: Execute Jupyter notebooks
       run: |
+        mkdir -p artifacts/executed-notebooks
         # Find all notebooks and execute them
         for notebook in $(find notebooks -name "*.ipynb"); do
           echo "Executing: $notebook"
-          # Execute notebook and fail if any cell errors
+          # Execute notebook and write to artifacts dir to avoid overwriting sources
           jupyter nbconvert --to notebook --execute \
             --ExecutePreprocessor.timeout=600 \
             --ExecutePreprocessor.kernel_name=portfolio-env \
-            --output "$notebook" \
+            --output-dir artifacts/executed-notebooks \
             "$notebook" || exit 1
         done
         
@@ -124,6 +114,7 @@ jobs:
           reports/figures/
           models/*.pkl
           data/processed/*.csv
+          artifacts/executed-notebooks/
         retention-days: 30
         
     # Step 13: Notify on failure
