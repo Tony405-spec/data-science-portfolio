@@ -1,4 +1,5 @@
 from src.data_loader import load_csv, write_csv
+from src.preprocessing import clean_rows
 
 
 def test_load_csv_round_trip(tmp_path):
@@ -12,3 +13,14 @@ def test_load_csv_round_trip(tmp_path):
     loaded = load_csv(file_path)
 
     assert loaded == rows
+
+
+def test_clean_rows_strips_and_filters():
+    rows = [
+        {"name": " Alice ", "score": "1"},
+        {"name": "", "score": "2"},
+    ]
+
+    cleaned = clean_rows(rows, required_fields=["name"])
+
+    assert cleaned == [{"name": "Alice", "score": "1"}]

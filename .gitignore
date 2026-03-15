@@ -14,9 +14,12 @@ dist/
 
 # Data and model artifacts
 /data/**
-!/data/**/.gitkeep
+!/data/raw/
+!/data/raw/sample_data.csv
+!/data/processed/
+!/data/processed/.gitkeep
 /models/**
-!/models/README.md
+!/models/.gitkeep
 
 # Reports outputs
 /reports/figures/**
