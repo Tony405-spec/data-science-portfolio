@@ -1,4 +1,4 @@
-from src.features import text_length_feature
+from src.preprocessing import text_length_feature
 
 
 def test_text_length_feature():

@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 from src.data_loader import load_csv, write_csv
-from src.features import text_length_feature
+from src.preprocessing import text_length_feature
 
 
 def run(input_path: str | Path, output_path: str | Path, field: str) -> Path:

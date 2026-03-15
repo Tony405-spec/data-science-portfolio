@@ -1,0 +1,5 @@
+id,name,score,category
+1,Alice,88,A
+2,Bob,92,B
+3,Charlie,,A
+4,Alice,88,A
