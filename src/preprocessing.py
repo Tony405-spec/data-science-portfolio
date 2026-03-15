@@ -100,7 +100,21 @@ def text_length_feature(rows, field):
     Returns:
     list of dicts with a single key '{field}_length'
     """
-    return [{f"{field}_length": len(row[field])} for row in rows]
+    result = []
+    for idx, row in enumerate(rows):
+        if field not in row:
+            raise ValueError(f"Missing field '{field}' in row at index {idx}")
+        value = row[field]
+        if value is None:
+            raise ValueError(f"Field '{field}' is None in row at index {idx}")
+        try:
+            length = len(value)
+        except TypeError:
+            raise ValueError(
+                f"Field '{field}' in row at index {idx} does not support len()"
+            )
+        result.append({f"{field}_length": length})
+    return result
 
 
 def create_features(df):
