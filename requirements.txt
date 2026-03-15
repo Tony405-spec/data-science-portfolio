@@ -1,1 +1,22 @@
-pytest==8.3.3
+# Core data science libraries
+numpy>=1.21.0
+pandas>=1.3.0
+scikit-learn>=1.0.0
+matplotlib>=3.4.0
+seaborn>=0.11.0
+jupyter>=1.0.0
+
+# Testing and code quality
+pytest>=6.2.0
+pytest-cov>=2.12.0
+flake8>=3.9.0
+black>=21.5b0
+
+# Notebook execution
+nbconvert>=6.0.0
+nbclient>=0.5.0
+ipykernel>=6.0.0
+
+# Additional utilities
+pyyaml>=5.4.0
+joblib>=1.0.0
