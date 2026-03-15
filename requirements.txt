@@ -1,22 +1,24 @@
-# Core data science libraries
-numpy>=1.21.0
-pandas>=1.3.0
-scikit-learn>=1.0.0
-matplotlib>=3.4.0
-seaborn>=0.11.0
-jupyter>=1.0.0
+# Core Data Science Libraries
+numpy==1.24.3
+pandas==2.0.3
+scikit-learn==1.3.0
+matplotlib==3.7.2
+seaborn==0.12.2
+jupyter==1.0.0
 
-# Testing and code quality
-pytest>=6.2.0
-pytest-cov>=2.12.0
-flake8>=3.9.0
-black>=21.5b0
+# Testing and Code Quality
+pytest==7.4.0
+pytest-cov==4.1.0
+flake8==6.1.0
+black==23.7.0
 
-# Notebook execution
-nbconvert>=6.0.0
-nbclient>=0.5.0
-ipykernel>=6.0.0
+# Notebook Execution
+nbconvert==7.7.3
+nbclient==0.8.0
+ipykernel==6.25.0
 
-# Additional utilities
-pyyaml>=5.4.0
-joblib>=1.0.0
+# Model Serialization
+joblib==1.3.1
+
+# Utilities
+pyyaml==6.0
