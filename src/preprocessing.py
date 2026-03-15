@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import logging
+from pandas.api.types import is_numeric_dtype
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ def handle_missing_values(df, strategy="median"):
 
     for col in df_clean.columns:
         if df_clean[col].isnull().any():
-            if df_clean[col].dtype in ["int64", "float64"]:
+            if is_numeric_dtype(df_clean[col]):
                 if strategy == "median":
                     df_clean[col] = df_clean[col].fillna(df_clean[col].median())
                 elif strategy == "mean":
