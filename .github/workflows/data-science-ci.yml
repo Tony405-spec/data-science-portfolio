@@ -30,7 +30,7 @@ jobs:
       
     # Step 2: Cache pip packages to speed up installation
     - name: Cache pip packages
-      uses: actions/cache@v3
+      uses: actions/upload-artifact@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
