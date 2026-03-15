@@ -16,9 +16,7 @@ def load_csv(path: str | Path) -> list[dict[str, str]]:
         return [dict(row) for row in reader]
 
 
-def write_csv(
-    path: str | Path, rows: Iterable[dict[str, str]], fieldnames: Iterable[str] | None = None
-) -> Path:
+def write_csv(path: str | Path, rows: Iterable[dict[str, str]], fieldnames: Iterable[str] | None = None) -> Path:
     """Write a list of dictionaries to a CSV file."""
     csv_path = Path(path)
     csv_path.parent.mkdir(parents=True, exist_ok=True)
