@@ -1,7 +1,5 @@
-"""Preprocessing package.
+"""Preprocessing package."""
 
-This file was previously populated with CI metadata lines (date/login), which are not valid
-Python code and caused flake8 to fail with E999.
-"""
+from .tools import handle_missing_values, clean_data, scale_features
 
-__all__ = []
+__all__ = ["handle_missing_values", "clean_data", "scale_features"]
