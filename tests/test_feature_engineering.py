@@ -1,8 +1,10 @@
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from src.preprocessing import text_length_feature
+
 
 def test_text_length_feature():
     rows = [{"name": "Amy"}, {"name": "Bobby"}]
