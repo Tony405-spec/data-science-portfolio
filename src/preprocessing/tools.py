@@ -84,3 +84,9 @@ def create_features(df):
                 df_new[f'{col1}_div_{col2}'] = df_new[col1] / (df_new[col2] + 1e-10)
                 df_new[f'{col1}_mult_{col2}'] = df_new[col1] * df_new[col2]
     return df_new
+def text_length_feature(rows, key):
+    """
+    Computes the length of the specified key in each row.
+    Returns a list of dictionaries containing the length under the new key.
+    """
+    return [{f"{key}_length": len(row[key])} for row in rows]
