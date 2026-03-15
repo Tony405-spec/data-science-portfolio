@@ -55,8 +55,8 @@ def clean_data(df):
     for col in date_cols:
         try:
             df_clean[col] = pd.to_datetime(df_clean[col])
-        except:
-            pass
+        except (ValueError, TypeError) as e:
+            logger.debug("Failed to convert column '%s' to datetime: %s", col, e, exc_info=True)
 
     return df_clean
 
