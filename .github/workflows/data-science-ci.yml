@@ -1,22 +1,143 @@
-name: Data Science CI
+# Data Science CI/CD Pipeline
+name: Data Science Portfolio CI
 
+# Trigger workflow on pushes to main branch and pull requests
 on:
   push:
+    branches: [ main, develop ]
   pull_request:
+    branches: [ main ]
+  # Schedule weekly runs (every Monday at 9 AM UTC)
+  schedule:
+    - cron: '0 9 * * 1'
+  # Allow manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
-  test:
+  validate-and-execute:
     runs-on: ubuntu-latest
+    
+    # Set environment variables for the entire job
+    env:
+      PYTHON_VERSION: '3.10'
+      PIP_CACHE: 'pip-cache'
+      
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.7
-      - name: Set up Python
-        uses: actions/setup-python@v5.1.1
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-      - name: Run tests
-        run: python -m pytest
+    # Step 1: Checkout repository code
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    # Step 2: Cache pip packages for faster builds
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          
+    # Step 3: Set up Python environment
+    - name: Setup Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    # Step 4: Install dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # Install additional packages for notebook execution
+        pip install nbconvert nbclient ipykernel
+        # Register kernel for notebook execution
+        python -m ipykernel install --user --name=data-science-env
+        
+    # Step 5: Run code quality checks
+    - name: Lint with flake8
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        
+    - name: Check formatting with black
+      run: |
+        # Check if black would reformat any files
+        black --check --diff .
+        
+    # Step 6: Run unit tests
+    - name: Test with pytest
+      run: |
+        pytest tests/ -v --cov=src --cov-report=term-missing --cov-report=xml
+        
+    # Step 7: Execute Jupyter notebooks
+    - name: Execute notebooks
+      run: |
+        # Find all notebooks except those in archive
+        for notebook in $(find notebooks -name "*.ipynb" -not -path "*/archive/*"); do
+          echo "Executing: $notebook"
+          # Execute notebook and save output
+          jupyter nbconvert --to notebook --execute --inplace \
+            --ExecutePreprocessor.timeout=600 \
+            --ExecutePreprocessor.kernel_name=data-science-env \
+            "$notebook" || exit 1
+        done
+        
+    # Step 8: Run data preprocessing scripts
+    - name: Run data preprocessing
+      run: |
+        python scripts/data_preprocessing.py
+        python scripts/feature_engineering.py
+        
+    # Step 9: Train ML models (if scripts exist)
+    - name: Train machine learning models
+      run: |
+        if [ -f scripts/model_training.py ]; then
+          python scripts/model_training.py
+        else
+          echo "No model training script found"
+        fi
+        
+    # Step 10: Generate visualizations
+    - name: Generate visualizations
+      run: |
+        python scripts/visualization_generator.py
+        
+    # Step 11: Convert notebooks to HTML reports
+    - name: Generate HTML reports
+      run: |
+        mkdir -p reports/html
+        for notebook in notebooks/reports/*.ipynb; do
+          if [ -f "$notebook" ]; then
+            jupyter nbconvert --to html \
+              --output-dir=reports/html \
+              "$notebook"
+          fi
+        done
+        
+    # Step 12: Upload artifacts
+    - name: Upload generated reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: analysis-reports
+        path: |
+          reports/html/
+          reports/figures/
+          models/
+          data/processed/
+        retention-days: 30
+        
+    # Step 13: Upload test coverage report
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        
+    # Step 14: Notify on failure (optional)
+    - name: Send failure notification
+      if: failure()
+      run: |
+        echo "Workflow failed. Check logs for details."
+        # Could integrate with Slack, email, etc.
