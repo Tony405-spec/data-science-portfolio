@@ -26,7 +26,7 @@ jobs:
     steps:
     # Step 1: Check out the repository code
     - name: Checkout code
-      uses: actions/upload-artifact@v4
+      uses: actions/checkout@v4
       
     # Step 2: Cache pip packages to speed up installation
     - name: Cache pip packages
