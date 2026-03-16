@@ -49,14 +49,18 @@ def prepare_data_for_modeling(df):
 
     # Handle categorical variables
     categorical_cols = X.select_dtypes(include=["object"]).columns
+    label_encoders = {}  # Dictionary to store encoders for each column
+    
     for col in categorical_cols:
         le = LabelEncoder()
         X[col] = le.fit_transform(X[col].astype(str))
+        label_encoders[col] = le
 
-    # Handle missing values
-    X = X.fillna(X.mean())
+    # Handle missing values - only for numeric columns
+    numeric_cols = X.select_dtypes(include=[np.number]).columns
+    X[numeric_cols] = X[numeric_cols].fillna(X[numeric_cols].mean())
 
-    return X, y, target, categorical_cols, le
+    return X, y, target, categorical_cols, label_encoders
 
 
 def train_classification_model(X_train, X_test, y_train, y_test):
@@ -64,24 +68,28 @@ def train_classification_model(X_train, X_test, y_train, y_test):
     logger.info("Training classification model")
 
     # Convert target to categorical if needed
-    if y_train.dtype not in ["int64", "int32"]:
-        le = LabelEncoder()
-        y_train = le.fit_transform(y_train)
-        y_test = le.transform(y_test)
+    y_train_encoded = y_train
+    y_test_encoded = y_test
+    label_encoder = None
+    
+    if y_train.dtype not in ["int64", "int32", "float64"]:
+        label_encoder = LabelEncoder()
+        y_train_encoded = label_encoder.fit_transform(y_train)
+        y_test_encoded = label_encoder.transform(y_test)
 
     # Train model
     model = RandomForestClassifier(n_estimators=100, random_state=42)
-    model.fit(X_train, y_train)
+    model.fit(X_train, y_train_encoded)
 
     # Make predictions
     y_pred = model.predict(X_test)
 
     # Calculate metrics
     metrics = {
-        "accuracy": accuracy_score(y_test, y_pred),
-        "precision": precision_score(y_test, y_pred, average="weighted"),
-        "recall": recall_score(y_test, y_pred, average="weighted"),
-        "f1_score": f1_score(y_test, y_pred, average="weighted"),
+        "accuracy": accuracy_score(y_test_encoded, y_pred),
+        "precision": precision_score(y_test_encoded, y_pred, average="weighted", zero_division=0),
+        "recall": recall_score(y_test_encoded, y_pred, average="weighted", zero_division=0),
+        "f1_score": f1_score(y_test_encoded, y_pred, average="weighted", zero_division=0),
     }
 
     # Feature importance
@@ -161,7 +169,7 @@ def main():
             dataset_name = file_path.stem.replace("_processed", "")
 
             # Prepare data
-            X, y, target, categorical_cols, label_encoder = prepare_data_for_modeling(df)
+            X, y, target, categorical_cols, label_encoders = prepare_data_for_modeling(df)
 
             if X is None:
                 continue
@@ -187,7 +195,8 @@ def main():
 
         except Exception as e:
             logger.error(f"Failed to train model for {file_path}: {str(e)}")
-            raise
+            # Don't raise here to allow other files to process
+            continue
 
 
 if __name__ == "__main__":
