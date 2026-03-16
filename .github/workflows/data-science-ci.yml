@@ -73,18 +73,20 @@ jobs:
         pytest tests/ -v --cov=src --cov-report=term-missing
         
     # Step 7: Execute all Jupyter notebooks
-    - name: Execute Jupyter notebooks
-      run: |
-        # Find all notebooks and execute them
-        for notebook in $(find notebooks -name "*.ipynb"); do
-          echo "Executing: $notebook"
-          # Execute notebook and fail if any cell errors
-          jupyter nbconvert --to notebook --execute \
-            --ExecutePreprocessor.timeout=600 \
-            --ExecutePreprocessor.kernel_name=portfolio-env \
-            --output "$notebook" \
-            "$notebook" || exit 1
-        done
+- name: Execute Jupyter notebooks
+  run: |
+    mkdir -p reports/executed_notebooks
+    for notebook in $(find notebooks -name "*.ipynb"); do
+      echo "Executing: $notebook"
+      out_name="$(basename "$notebook")"
+      jupyter nbconvert --to notebook --execute \
+        --ExecutePreprocessor.timeout=600 \
+        --ExecutePreprocessor.kernel_name=portfolio-env \
+        --output "$out_name" \
+        --output-dir reports/executed_notebooks \
+        "$notebook" || exit 1
+    done
+        
         
     # Step 8: Run data preprocessing scripts
     - name: Run data preprocessing
