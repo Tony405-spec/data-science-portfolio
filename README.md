@@ -61,3 +61,12 @@ When you push code to this repository, GitHub Actions automatically:
    ```bash
    git clone https://github.com/Tony405-spec/data-science-portfolio.git
    cd data-science-portfolio
+   ```
+
+## 🤖 Copilot AI Capabilities
+
+- **Code assistance**: Understands this repository's structure, proposes edits, and can generate or refactor Python, notebook, and CI code while following repo conventions.
+- **Testing & QA**: Reads and writes pytest cases, suggests targeted coverage, and explains how CI runs linting (black/flake8) and notebooks.
+- **Data workflows**: Helps reason about preprocessing, feature engineering, modeling scripts, and how artifacts/notebooks fit into the pipeline.
+- **Documentation & reviews**: Summarizes modules, drafts README/usage notes, and reviews diffs for clarity and safety concerns.
+- **Limitations**: Works offline in this environment (no internet), avoids secrets, and defers to project maintainers for final decisions.
