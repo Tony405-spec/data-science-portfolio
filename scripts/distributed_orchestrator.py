@@ -8,7 +8,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 import sys
 
@@ -47,7 +47,7 @@ def _persist_metrics(metrics: dict, roc_auc: float | None, output_dir: Path) -> 
 
 def _persist_model(model, output_dir: Path) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     model_path = output_dir / f"random_forest_{timestamp}.joblib"
     joblib.dump(model, model_path)
     return model_path
@@ -151,18 +151,19 @@ def orchestrate_pipeline(
 
 
 def parse_args() -> argparse.Namespace:
+    repo_root = Path(__file__).resolve().parent.parent
     parser = argparse.ArgumentParser(description="Run distributed ML workflow.")
     parser.add_argument(
         "--input-path",
         type=Path,
-        default=Path("/home/runner/work/data-science-portfolio/data-science-portfolio/data/raw/sample_data.csv"),
+        default=repo_root / "data" / "raw" / "sample_data.csv",
         help="Path to the raw CSV dataset.",
     )
     parser.add_argument("--target-column", type=str, default="churned", help="Name of the target column.")
     parser.add_argument(
         "--results-dir",
         type=Path,
-        default=Path("/home/runner/work/data-science-portfolio/data-science-portfolio/reports/distributed"),
+        default=repo_root / "reports" / "distributed",
         help="Directory to store metrics and figures.",
     )
     parser.add_argument("--workers", type=int, default=3, help="Number of workers to simulate.")

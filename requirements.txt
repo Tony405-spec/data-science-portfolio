@@ -4,17 +4,17 @@ pandas==2.2.2
 scikit-learn==1.4.2
 matplotlib==3.8.4
 seaborn==0.13.2
-dask[distributed]==2024.7.1
+dask[distributed]==2024.9.0
 jupyter==1.0.0
 
 # Testing and Code Quality
 pytest==8.3.3
 pytest-cov==5.0.0
 flake8==7.1.1
-black==24.8.0
+black==26.3.1
 
 # Notebook Execution
-nbconvert==7.16.4
+nbconvert==7.17.0
 nbclient==0.10.0
 ipykernel==6.29.5
 

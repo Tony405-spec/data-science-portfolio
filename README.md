@@ -52,12 +52,13 @@ The repository now includes a modular, Dask-powered workflow that simulates mult
 - **Visualization Node**: Renders confusion matrix, ROC curve, feature importance, and training vs validation curves.
 - **Orchestrator**: Coordinates all nodes on a Dask `LocalCluster` to simulate multi-worker execution.
 
-Run the end-to-end workflow from the repository root with absolute paths:
+Run the end-to-end workflow from the repository root with absolute paths derived from your current directory:
 
 ```bash
+BASE_DIR="$(pwd)"
 python scripts/distributed_orchestrator.py \
-  --input-path /home/runner/work/data-science-portfolio/data-science-portfolio/data/raw/sample_data.csv \
-  --results-dir /home/runner/work/data-science-portfolio/data-science-portfolio/reports/distributed \
+  --input-path "${BASE_DIR}/data/raw/sample_data.csv" \
+  --results-dir "${BASE_DIR}/reports/distributed" \
   --target-column churned \
   --workers 3
 ```
