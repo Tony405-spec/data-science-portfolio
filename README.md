@@ -35,10 +35,32 @@ A professional data science portfolio demonstrating automated CI/CD pipelines, r
 - **Data Analysis**: pandas, numpy
 - **Machine Learning**: scikit-learn
 - **Visualization**: matplotlib, seaborn
+- **Distributed Execution**: Dask (LocalCluster simulation)
 - **Notebooks**: Jupyter
 - **Testing**: pytest
 - **Code Quality**: black, flake8
 - **CI/CD**: GitHub Actions
+
+## 🧭 Distributed Multi-Node Workflow
+
+The repository now includes a modular, Dask-powered workflow that simulates multiple nodes:
+
+- **Ingestion Node**: Reads raw CSV data and reports dataset metadata.
+- **Preprocessing Node**: Cleans data, imputes missing values, encodes categoricals, engineers features, and scales inputs.
+- **Training Node**: Runs hyperparameter tuning for a RandomForest classifier and captures learning curves.
+- **Evaluation Node**: Computes accuracy, precision, recall, F1, confusion matrix, and ROC/AUC.
+- **Visualization Node**: Renders confusion matrix, ROC curve, feature importance, and training vs validation curves.
+- **Orchestrator**: Coordinates all nodes on a Dask `LocalCluster` to simulate multi-worker execution.
+
+Run the end-to-end workflow from the repository root with absolute paths:
+
+```bash
+python scripts/distributed_orchestrator.py \
+  --input-path /home/runner/work/data-science-portfolio/data-science-portfolio/data/raw/sample_data.csv \
+  --results-dir /home/runner/work/data-science-portfolio/data-science-portfolio/reports/distributed \
+  --target-column churned \
+  --workers 3
+```
 
 ## 📊 Example Workflow
 
