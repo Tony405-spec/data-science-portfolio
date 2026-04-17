@@ -1,49 +1,46 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
-from typing import Dict
-
-import dask.dataframe as dd
-import numpy as np
-import pandas as pd
-from dask import delayed
 from sklearn.datasets import make_classification
+import pandas as pd
 
 
-def _generate_partition(config: Dict, seed: int) -> pd.DataFrame:
-    """Generate a synthetic classification partition."""
+def ingest_data(ingestion_config: dict, paths: dict, logger: logging.Logger) -> Path:
+    """Ingest or generate data for the pipeline."""
+    logger.info("Starting data ingestion...")
+    
+    # Generate synthetic data for testing
+    dataset_name = ingestion_config.get("dataset_name", "synthetic_data")
+    n_samples = ingestion_config.get("n_samples", 1000)
+    n_features = ingestion_config.get("n_features", 20)
+    n_informative = ingestion_config.get("n_informative", 10)
+    n_redundant = ingestion_config.get("n_redundant", 5)
+    n_classes = ingestion_config.get("n_classes", 2)
+    class_sep = ingestion_config.get("class_sep", 1.0)
+    random_state = ingestion_config.get("random_state", 42)
+    
+    logger.info(f"Generating {dataset_name} with {n_samples} samples, {n_features} features")
+    
     X, y = make_classification(
-        n_samples=int(config["n_samples"] / config["chunks"]),
-        n_features=config["n_features"],
-        n_informative=config["n_informative"],
-        n_redundant=config["n_redundant"],
-        n_classes=config["n_classes"],
-        class_sep=config.get("class_sep", 1.0),
-        random_state=seed,
+        n_samples=n_samples,
+        n_features=n_features,
+        n_informative=n_informative,
+        n_redundant=n_redundant,
+        n_classes=n_classes,
+        class_sep=class_sep,
+        random_state=random_state,
     )
-    feature_cols = [f"feature_{i}" for i in range(config["n_features"])]
+    
+    # Create DataFrame
+    feature_cols = [f"feature_{i}" for i in range(n_features)]
     df = pd.DataFrame(X, columns=feature_cols)
-    df["target"] = y
-    return df
-
-
-def ingest_data(config: Dict, paths: Dict, logger) -> Path:
-    """Create a synthetic dataset and persist to the raw data directory."""
-    raw_dir = Path(paths["raw_dir"])
-    raw_dir.mkdir(parents=True, exist_ok=True)
-
-    dataset_name = config["dataset_name"]
-    logger.info("Generating synthetic dataset '%s' with %s partitions", dataset_name, config["chunks"])
-
-    first_df = _generate_partition(config, seed=config["random_state"])
-    delayed_parts = [
-        delayed(_generate_partition)(config, seed=config["random_state"] + i + 1) for i in range(config["chunks"] - 1)
-    ]
-
-    ddf = dd.concat([dd.from_pandas(first_df, npartitions=1)] + [dd.from_delayed(d, meta=first_df) for d in delayed_parts])
-    ddf = ddf.persist()
-
-    raw_path = raw_dir / f"{dataset_name}.parquet"
-    dd.to_parquet(ddf, raw_path, engine="pyarrow", overwrite=True)
-    logger.info("Saved raw dataset to %s", raw_path)
+    df['target'] = y
+    
+    # Save raw data
+    raw_path = Path(paths["raw_dir"]) / "raw_data.parquet"
+    raw_path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(raw_path)
+    
+    logger.info(f"Saved raw data to {raw_path}")
     return raw_path
