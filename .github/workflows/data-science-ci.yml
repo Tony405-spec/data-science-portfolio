@@ -35,11 +35,25 @@ jobs:
         python-version: ${{ env.PYTHON_VERSION }}
         cache: 'pip'
         
-    # Step 3: Install all dependencies
+    # Step 3: Install all dependencies with version pinning for compatibility
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        
+        # First uninstall problematic packages to avoid conflicts
+        pip uninstall -y mistune nbconvert jupyter-client jupyter-core ipykernel traitlets || true
+        
+        # Install specific compatible versions to fix the markdown parsing error
+        pip install mistune==2.0.5
+        pip install nbconvert==7.16.4
+        pip install jupyter-client==8.6.2
+        pip install ipykernel==6.29.5
+        pip install jupyter-core==5.7.2
+        pip install traitlets==5.14.3
+        
+        # Then install your other requirements
         pip install -r requirements.txt
+        
         # Install Jupyter kernel for notebook execution
         python -m ipykernel install --user --name=portfolio-env
         
@@ -97,8 +111,10 @@ jobs:
         # Convert all notebooks to HTML
         for notebook in notebooks/reports/*.ipynb; do
           if [ -f "$notebook" ]; then
+            echo "Converting $notebook to HTML"
             jupyter nbconvert --to html \
               --output-dir=reports/html \
+              --TemplateExporter.exclude_input=True \
               "$notebook"
           fi
         done

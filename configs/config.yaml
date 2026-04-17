@@ -1,0 +1,47 @@
+distributed:
+  n_workers: 3
+  threads_per_worker: 2
+  memory_limit: "1GB"
+
+paths:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  models_dir: models
+  outputs_dir: outputs
+
+ingestion:
+  dataset_name: synthetic_classification
+  n_samples: 1000
+  n_features: 20
+  n_informative: 10
+  n_redundant: 5
+  n_classes: 2
+  class_sep: 1.2
+  chunks: 4
+  random_state: 42
+
+preprocessing:
+  impute_strategy: median
+  scale: true
+  test_size: 0.2
+  random_state: 42
+
+training:
+  model_type: random_forest
+  hyperparameters:
+    n_estimators: [150, 250]
+    max_depth: [5, 10, null]
+    min_samples_split: [2, 4]
+  n_jobs: -1
+
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - roc_auc
+
+visualization:
+  figure_format: png
+  dpi: 120

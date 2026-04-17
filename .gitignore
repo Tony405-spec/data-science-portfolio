@@ -15,11 +15,17 @@ dist/
 # Data and model artifacts
 /data/**
 !/data/raw/
-!/data/raw/sample_data.csv
+!/data/raw/.gitkeep
 !/data/processed/
 !/data/processed/.gitkeep
 /models/**
 !/models/.gitkeep
+
+# Outputs and logs
+/outputs/**
+!/outputs/.gitkeep
+/logs/**
+!/logs/.gitkeep
 
 # Reports outputs
 /reports/figures/**
