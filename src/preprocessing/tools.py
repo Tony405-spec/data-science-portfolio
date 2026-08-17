@@ -64,7 +64,7 @@ def scale_features(df, columns=None, scaler_type="standard"):
     if columns is None:
         columns = df.select_dtypes(include=["int64", "float64"]).columns
     if len(columns) == 0:
-        return df
+        return df.copy(), None
     if scaler_type == "standard":
         scaler = StandardScaler()
     else:

@@ -77,6 +77,15 @@ class TestDataPreprocessing:
         assert df_scaled["col1"].min() == 0
         assert df_scaled["col1"].max() == 1
 
+    def test_scale_features_no_numeric_columns_returns_tuple(self):
+        """Test scaling without numeric columns keeps return type consistent."""
+        df = pd.DataFrame({"category": ["A", "B", "C"]})
+
+        df_scaled, scaler = scale_features(df)
+
+        assert df_scaled.equals(df)
+        assert scaler is None
+
 
 if __name__ == "__main__":
     pytest.main([__file__])
