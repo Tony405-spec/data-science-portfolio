@@ -1,6 +1,6 @@
 # Data Science Portfolio
 
-[![Data Science Portfolio CI](https://github.com/YOUR_USERNAME/data-science-portfolio/actions/workflows/data-science-ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/data-science-portfolio/actions/workflows/data-science-ci.yml)
+[![Data Science Portfolio CI](https://github.com/skynet-datagrid-labs/data-science-portfolio/actions/workflows/data-science-ci.yml/badge.svg)](https://github.com/skynet-datagrid-labs/data-science-portfolio/actions/workflows/data-science-ci.yml)
 
 A professional data science portfolio demonstrating automated CI/CD pipelines, reproducible analysis, and production-ready code practices.
 
@@ -14,6 +14,7 @@ A professional data science portfolio demonstrating automated CI/CD pipelines, r
 - **Artifact Generation**: HTML reports and visualizations saved as artifacts
 
 ## 📁 Repository Structure
+```text
 ├── .github/workflows/ # CI/CD pipeline definitions
 ├── data/
 │ ├── raw/ # Original, immutable data
@@ -28,6 +29,7 @@ A professional data science portfolio demonstrating automated CI/CD pipelines, r
 └── reports/ # Generated reports and figures
 ├── figures/
 └── html/
+```
 
 ## 🛠️ Technology Stack
 
@@ -59,5 +61,43 @@ When you push code to this repository, GitHub Actions automatically:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Tony405-spec/data-science-portfolio.git
+   git clone https://github.com/skynet-datagrid-labs/data-science-portfolio.git
    cd data-science-portfolio
+   ```
+
+2. **Create an environment and install dependencies**
+   ```bash
+   python -m venv .venv
+   python -m pip install --upgrade pip
+   python -m pip install -r requirements.txt
+   ```
+
+3. **Run the test suite**
+   ```bash
+   python -m pytest
+   ```
+
+4. **Run the core scripts**
+   ```bash
+   python scripts/data_preprocessing.py
+   python scripts/feature_engineering.py
+   python scripts/model_training.py
+   python scripts/visualization_generator.py
+   ```
+
+5. **Work with notebooks**
+   ```bash
+   jupyter notebook
+   ```
+
+   Start with `notebooks/exploratory/01_initial_eda.ipynb`, then review `notebooks/reports/02_final_analysis.ipynb`.
+
+## Development Checks
+
+Use these commands before opening a pull request:
+
+```bash
+python -m pytest
+python -m black --check .
+python -m flake8 .
+```
