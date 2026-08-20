@@ -87,6 +87,8 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+Dependency updates should follow [`DEPENDENCY_POLICY.md`](DEPENDENCY_POLICY.md).
+
 ## Running the pipeline
 
 ```bash
