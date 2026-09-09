@@ -5,14 +5,25 @@ from pathlib import Path
 from typing import Iterable
 
 
-def load_csv(path: str | Path) -> list[dict[str, str]]:
-    """Load a CSV file into a list of dictionaries."""
+def load_csv(path: str | Path, required_fields: Iterable[str] | None = None) -> list[dict[str, str]]:
+    """Load a CSV file into a list of dictionaries.
+
+    Args:
+        path: CSV file path.
+        required_fields: Optional field names that must exist in the header.
+    """
     csv_path = Path(path)
     if not csv_path.exists():
         raise FileNotFoundError(f"CSV file not found: {csv_path}")
 
     with csv_path.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
+        fieldnames = set(reader.fieldnames or [])
+        if required_fields:
+            missing = sorted(set(required_fields) - fieldnames)
+            if missing:
+                raise ValueError(f"CSV file missing required fields: {', '.join(missing)}")
+
         return [dict(row) for row in reader]
 
 
