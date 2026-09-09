@@ -28,18 +28,24 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     return df_clean
 
 
-def scale_features(df: pd.DataFrame, feature_cols: Optional[list] = None) -> pd.DataFrame:
+def scale_features(
+    df: pd.DataFrame,
+    feature_cols: Optional[list] = None,
+    scaler_type: str = "standard",
+) -> tuple[pd.DataFrame, Optional[object]]:
     """Scale numerical features."""
-    from sklearn.preprocessing import StandardScaler
-    
+    from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
     df_scaled = df.copy()
     if feature_cols is None:
         feature_cols = df_scaled.select_dtypes(include=[np.number]).columns
-    
-    scaler = StandardScaler()
+    if len(feature_cols) == 0:
+        return df_scaled, None
+
+    scaler = StandardScaler() if scaler_type == "standard" else MinMaxScaler()
     df_scaled[feature_cols] = scaler.fit_transform(df_scaled[feature_cols])
-    
-    return df_scaled
+
+    return df_scaled, scaler
 
 
 def create_features(df: pd.DataFrame) -> pd.DataFrame:
