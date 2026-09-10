@@ -1,3 +1,8 @@
-from .preprocessing import handle_missing_values, clean_data, scale_features, text_length_feature
+__all__ = ["run_pipeline"]
 
-__all__ = ["handle_missing_values", "clean_data", "scale_features", "text_length_feature"]
+
+def run_pipeline(*args, **kwargs):
+    """Run the ML pipeline, importing orchestration dependencies lazily."""
+    from .orchestration import run_pipeline as _run_pipeline
+
+    return _run_pipeline(*args, **kwargs)

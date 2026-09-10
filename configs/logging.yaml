@@ -1,0 +1,24 @@
+version: 1
+formatters:
+  standard:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: standard
+    stream: ext://sys.stdout
+  file:
+    class: logging.FileHandler
+    level: INFO
+    formatter: standard
+    filename: logs/pipeline.log
+    encoding: utf8
+loggers:
+  ml_pipeline:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+root:
+  level: WARNING
+  handlers: [console]
