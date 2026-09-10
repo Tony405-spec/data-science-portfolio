@@ -50,7 +50,7 @@ def prepare_data_for_modeling(df):
     # Handle categorical variables
     categorical_cols = X.select_dtypes(include=["object"]).columns
     label_encoders = {}  # Dictionary to store encoders for each column
-    
+
     for col in categorical_cols:
         le = LabelEncoder()
         X[col] = le.fit_transform(X[col].astype(str))
@@ -71,7 +71,7 @@ def train_classification_model(X_train, X_test, y_train, y_test):
     y_train_encoded = y_train
     y_test_encoded = y_test
     label_encoder = None
-    
+
     if y_train.dtype not in ["int64", "int32", "float64"]:
         label_encoder = LabelEncoder()
         y_train_encoded = label_encoder.fit_transform(y_train)
