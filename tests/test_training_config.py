@@ -1,7 +1,6 @@
 import importlib.util
 from pathlib import Path
 
-
 TRAINER_PATH = Path(__file__).resolve().parents[1] / "src" / "training" / "trainer.py"
 spec = importlib.util.spec_from_file_location("trainer", TRAINER_PATH)
 trainer = importlib.util.module_from_spec(spec)

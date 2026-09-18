@@ -25,7 +25,7 @@ def preprocess_data(raw_path: Path, config: Dict, paths: Dict, logger) -> Path:
     logger.info("Loaded raw dataset with shape %s", ddf.shape)
 
     df = ddf.compute()
-    
+
     # Handle case where 'target' column might not exist (e.g., in test data generation)
     if "target" in df.columns:
         features = df.drop(columns=["target"])
@@ -68,21 +68,18 @@ def _stratify_target(y: np.ndarray) -> np.ndarray | None:
 def split_data(processed_path: Path, config: Dict) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Split processed data into train and test sets."""
     df = pd.read_parquet(processed_path)
-    
+
     # Check if target column exists
     if "target" not in df.columns:
         raise ValueError("Processed data must contain a 'target' column for splitting")
-    
+
     X = df.drop(columns=["target"]).to_numpy()
     y = df["target"].to_numpy()
 
     # Use stratify only when every class has enough observations to be split.
     stratify_param = _stratify_target(y)
-    
+
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, 
-        test_size=config.get("test_size", 0.2), 
-        random_state=config.get("random_state", 42), 
-        stratify=stratify_param
+        X, y, test_size=config.get("test_size", 0.2), random_state=config.get("random_state", 42), stratify=stratify_param
     )
     return X_train, X_test, y_train, y_test
