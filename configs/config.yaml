@@ -28,6 +28,7 @@ preprocessing:
 
 training:
   model_type: random_forest
+  random_state: 42
   hyperparameters:
     n_estimators: [150, 250]
     max_depth: [5, 10, null]

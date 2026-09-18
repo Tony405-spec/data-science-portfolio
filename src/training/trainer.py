@@ -11,7 +11,10 @@ from sklearn.model_selection import GridSearchCV, learning_curve
 
 
 def _build_model(config: Dict) -> Tuple[RandomForestClassifier, Dict]:
-    estimator = RandomForestClassifier(random_state=42, n_jobs=config.get("n_jobs", -1))
+    estimator = RandomForestClassifier(
+        random_state=config.get("random_state", 42),
+        n_jobs=config.get("n_jobs", -1),
+    )
     param_grid = config.get(
         "hyperparameters",
         {"n_estimators": [150, 250], "max_depth": [5, 10, None], "min_samples_split": [2, 4]},
