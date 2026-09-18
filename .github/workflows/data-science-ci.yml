@@ -28,22 +28,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    # Step 2: Cache pip packages to speed up installation
-    - name: Cache pip packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-          
-    # Step 3: Set up Python environment
+    # Step 2: Set up Python environment
     - name: Setup Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
         
-    # Step 4: Install all dependencies with version pinning for compatibility
+    # Step 3: Install all dependencies with version pinning for compatibility
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -65,7 +57,7 @@ jobs:
         # Install Jupyter kernel for notebook execution
         python -m ipykernel install --user --name=portfolio-env
         
-    # Step 5: Run code quality checks
+    # Step 4: Run code quality checks
     - name: Lint with flake8
       run: |
         # Check for syntax errors
@@ -73,20 +65,16 @@ jobs:
         # Check for style issues (warnings only)
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
-    - name: Format code with black
-      run: |
-        black . --line-length=127
-
     - name: Check formatting with black
       run: |
         black --check --diff . --line-length=127
         
-    # Step 6: Run unit tests
+    # Step 5: Run unit tests
     - name: Run pytest tests
       run: |
         pytest tests/ -v --cov=src --cov-report=term-missing
         
-    # Step 7: Execute all Jupyter notebooks
+    # Step 6: Execute all Jupyter notebooks
     - name: Execute Jupyter notebooks
       run: |
         mkdir -p reports/executed_notebooks
@@ -101,22 +89,22 @@ jobs:
             "$notebook" || exit 1
         done
         
-    # Step 8: Run data preprocessing scripts
+    # Step 7: Run data preprocessing scripts
     - name: Run data preprocessing
       run: |
         python scripts/data_preprocessing.py
         
-    # Step 9: Generate visualizations
+    # Step 8: Generate visualizations
     - name: Generate visualizations
       run: |
         python scripts/visualization_generator.py
         
-    # Step 10: Train ML models
+    # Step 9: Train ML models
     - name: Train machine learning models
       run: |
         python scripts/model_training.py
         
-    # Step 11: Convert notebooks to HTML reports
+    # Step 10: Convert notebooks to HTML reports
     - name: Generate HTML reports
       run: |
         mkdir -p reports/html
@@ -131,7 +119,7 @@ jobs:
           fi
         done
         
-    # Step 12: Upload all artifacts
+    # Step 11: Upload all artifacts
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -142,10 +130,3 @@ jobs:
           models/*.pkl
           data/processed/*.csv
         retention-days: 30
-        
-    # Step 13: Notify on failure
-    - name: Check for failures
-      if: failure()
-      run: |
-        echo "❌ Workflow failed! Check the logs for details."
-        exit 1
